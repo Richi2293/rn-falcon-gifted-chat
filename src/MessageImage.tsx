@@ -34,6 +34,7 @@ interface MessageImageProps<TMessage extends IMessage = IMessage> {
   imageStyle?: ImageStyle
   imageProps?: Partial<ImageProps>
   lightboxProps?: object
+  customOnClose?: () => {}
 }
 
 export default class MessageImage extends Component<MessageImageProps> {
@@ -53,13 +54,22 @@ export default class MessageImage extends Component<MessageImageProps> {
     imageStyle: PropTypes.object,
     imageProps: PropTypes.object,
     lightboxProps: PropTypes.object,
+    customOnClose: PropTypes.func,
   }
+
+  callFunctionCustom() {
+    if(this.props.customOnClose != null) {
+      this.props.customOnClose();
+    }
+  }
+
   render() {
     const {
       containerStyle,
       lightboxProps,
       imageProps,
       imageStyle,
+      customOnClose,
       currentMessage,
     } = this.props
     if (!!currentMessage) {
@@ -69,6 +79,7 @@ export default class MessageImage extends Component<MessageImageProps> {
             activeProps={{
               style: styles.imageActive,
             }}
+            onClose={() => this.callFunctionCustom()}
             {...lightboxProps}
           >
             <Image
