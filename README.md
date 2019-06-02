@@ -70,7 +70,6 @@
 
 ## Features
 
-- **Bot or quick replies implementation [soon](https://github.com/FaridSafi/react-native-gifted-chat/pull/1211)**
 - Write with **TypeScript** (since 0.8.0)
 - Fully customizable components
 - Composer actions (to attach photos, etc.)
@@ -83,6 +82,7 @@
 - InputToolbar avoiding keyboard
 - Redux support
 - System message
+- Quick Reply messages (bot)
 
 ## Dependency
 
@@ -105,35 +105,35 @@
 ## Example
 
 ```jsx
-import React from "react";
-import { GiftedChat } from "react-native-gifted-chat";
+import React from 'react'
+import { GiftedChat } from 'react-native-gifted-chat'
 
 class Example extends React.Component {
   state = {
-    messages: []
-  };
+    messages: [],
+  }
 
   componentWillMount() {
     this.setState({
       messages: [
         {
           _id: 1,
-          text: "Hello developer",
+          text: 'Hello developer',
           createdAt: new Date(),
           user: {
             _id: 2,
-            name: "React Native",
-            avatar: "https://placeimg.com/140/140/any"
-          }
-        }
-      ]
-    });
+            name: 'React Native',
+            avatar: 'https://placeimg.com/140/140/any',
+          },
+        },
+      ],
+    })
   }
 
   onSend(messages = []) {
     this.setState(previousState => ({
-      messages: GiftedChat.append(previousState.messages, messages)
-    }));
+      messages: GiftedChat.append(previousState.messages, messages),
+    }))
   }
 
   render() {
@@ -142,10 +142,10 @@ class Example extends React.Component {
         messages={this.state.messages}
         onSend={messages => this.onSend(messages)}
         user={{
-          _id: 1
+          _id: 1,
         }}
       />
-    );
+    )
   }
 }
 ```
@@ -191,6 +191,80 @@ e.g. System Message
 }
 ```
 
+### e.g. Chat Message with Quick Reply options
+
+See PR [#1211](https://github.com/FaridSafi/react-native-gifted-chat/pull/1211)
+
+```ts
+interface Reply {
+  title: string
+  value: string
+  messageId?: any
+}
+
+interface QuickReplies {
+  type: 'radio' | 'checkbox'
+  values: Reply[]
+  keepIt?: boolean
+}
+```
+
+```js
+  {
+    _id: 1,
+    text: 'This is a quick reply. Do you love Gifted Chat? (radio) KEEP IT',
+    createdAt: new Date(),
+    quickReplies: {
+      type: 'radio', // or 'checkbox',
+      keepIt: true,
+      values: [
+        {
+          title: '😋 Yes',
+          value: 'yes',
+        },
+        {
+          title: '📷 Yes, let me show you with a picture!',
+          value: 'yes_picture',
+        },
+        {
+          title: '😞 Nope. What?',
+          value: 'no',
+        },
+      ],
+    },
+    user: {
+      _id: 2,
+      name: 'React Native',
+    },
+  },
+  {
+    _id: 2,
+    text: 'This is a quick reply. Do you love Gifted Chat? (checkbox)',
+    createdAt: new Date(),
+    quickReplies: {
+      type: 'checkbox', // or 'radio',
+      values: [
+        {
+          title: 'Yes',
+          value: 'yes',
+        },
+        {
+          title: 'Yes, let me show you with a picture!',
+          value: 'yes_picture',
+        },
+        {
+          title: 'Nope. What?',
+          value: 'no',
+        },
+      ],
+    },
+    user: {
+      _id: 2,
+      name: 'React Native',
+    },
+  }
+```
+
 ## Props
 
 - **`messages`** _(Array)_ - Messages to display
@@ -222,6 +296,7 @@ e.g. System Message
 - **`renderMessage`** _(Function)_ - Custom message container
 - **`renderMessageText`** _(Function)_ - Custom message text
 - **`renderMessageImage`** _(Function)_ - Custom message image
+- **`renderMessageVideo`** _(Function)_ - Custom message video
 - **`imageProps`** _(Object)_ - Extra props to be passed to the [`<Image>`](https://facebook.github.io/react-native/docs/image.html) component created by the default `renderMessageImage`
 - **`videoProps`** _(Object)_ - Extra props to be passed to the [`<Video>`](https://github.com/react-native-community/react-native-video) component created by the default `renderMessageVideo`
 - **`lightboxProps`** _(Object)_ - Extra props to be passed to the `MessageImage`'s [Lightbox](https://github.com/oblador/react-native-lightbox)
@@ -261,7 +336,10 @@ e.g. System Message
 * **`scrollToBottom`** _(Bool)_ - Enables the scrollToBottom Component (Default is false)
 * **`scrollToBottomComponent`** _(Function)_ - Custom Scroll To Bottom Component container
 * **`scrollToBottomOffset`** _(Integer)_ - Custom Height Offset upon which to begin showing Scroll To Bottom Component (Default is 200)
+* **`scrollToBottomStyle`** _(Object)_ - Custom style for Bottom Component container
 * **`alignTop`** _(Boolean)_ Controls whether or not the message bubbles appear at the top of the chat (Default is false - bubbles align to bottom)
+* **`onQuickReply`** _(Function)_ - Callback when sending a quick reply (to backend server)
+* **`renderQuickReply`** _(Function)_ - Custom quick reply view
 
 ## Imperative methods
 
@@ -306,17 +384,8 @@ If you are using Create React Native App / Expo, no Android specific installatio
 
 ## Notes for local development
 
-You can use [`wml`](https://github.com/wix/wml) to keep the example app in sync
-with any changes you make to the library during development. Steps:
-
-1. Install it: `npm install -g wml`
-2. Configure it: `wml add . example/node_modules/react-native-gifted-chat` from the root directory
-3. `cd example`
-4. `npm start`
-5. `wml start` in another terminal window (doesn't matter where)
-
-Note that it's important for `wml start` to come **after** `npm start`, or you'll get `Can't find entry file index.js` errors.
-If you have any issues, you can clear your watches using `watchman watch-del-all` and try again.
+1. Install `yarn add -g expo-cli`
+2. `expo start`
 
 ## Questions
 
