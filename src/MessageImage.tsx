@@ -46,6 +46,7 @@ export default class MessageImage extends Component<MessageImageProps> {
     imageStyle: {},
     imageProps: {},
     lightboxProps: {},
+    customOnClose: () => {}
   }
 
   static propTypes = {
@@ -69,7 +70,6 @@ export default class MessageImage extends Component<MessageImageProps> {
       lightboxProps,
       imageProps,
       imageStyle,
-      customOnClose,
       currentMessage,
     } = this.props
     if (!!currentMessage) {
